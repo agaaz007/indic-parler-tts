@@ -1,0 +1,19 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 534437858001.dkr.ecr.ap-south-1.amazonaws.com)
+  build:
+    commands:
+      - echo Build started on `date`
+      - echo Building the Docker image...
+      - docker build --platform=linux/amd64 -t parler-tts-5:latest .
+      - docker tag parler-tts-5:latest 534437858001.dkr.ecr.ap-south-1.amazonaws.com/parler-tts-5:latest
+  post_build:
+    commands:
+      - echo Pushing the Docker image...
+      - docker push 534437858001.dkr.ecr.ap-south-1.amazonaws.com/parler-tts-5:latest
+      - echo Build completed on `date`
